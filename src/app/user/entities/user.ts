@@ -1,4 +1,3 @@
-// src/app/user/entities/user.ts
 import { z } from 'zod';
 
 export const UserSchema = z.object({

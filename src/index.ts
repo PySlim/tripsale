@@ -1,4 +1,3 @@
-
 import createExpressApp from './frameworks/http/express';
 import SequelizeClient from "./frameworks/database/sequelize";
 import {Router} from "express";
@@ -7,51 +6,43 @@ import {ManageUsersUsecase} from "./app/user/usecases/user.usecase";
 import {createUsersRouter} from "./app/user/http/user.router";
 import {createRedisClient} from "./frameworks/database/redis";
 import {RedisUserCache} from "./app/user/repositories/user.redis.cahe";
-
-/*import { createFirestoreClient, FirestoreClient } from './frameworks/db/firestore';
-import { createRedisClient, RedisClient } from './frameworks/db/redis';
-
-import { createGreetingRouter } from './greeting/http/greeting-router';
-import { GreetingUsecase } from './greeting/usecases/greeting-usecase';
-import { RedisGreetingCache } from './greeting/repositories/redis-greeting-cache';
-import { createBooksRouter } from './books/http/books-router';
-import { ManageBooksUsecase } from './books/usecases/manage-books-usecase';
-import { FirestoreBooksRepository } from './books/repositories/firestore-books-repository';
-import { SequelizeBooksRepository } from './books/repositories/sequelize-books-repository';*/
+import {SequelizeProviderRepository} from "./app/provider/repositories/provider.repository";
+import {ManageProvidersUsecase} from "./app/provider/usecases/provider.usecase";
+import {createProvidersRouter} from "./app/provider/http/provider.router";
+import {SequelizeCategoryRepository} from "./app/category/repositories/category.repository";
+import {ManageCategoriesUsecase} from "./app/category/usecases/category.usecase";
+import {createCategoriesRouter} from "./app/category/http/category.router";
 
 interface AppDependencies {
     redisClient: ReturnType<typeof createRedisClient>;
-    //firestoreClient: FirestoreClient;
     sequelizeClient: SequelizeClient;
     sequelizeUserRepository: SequelizeUserRepository;
+    sequelizeProviderRepository: SequelizeProviderRepository;
+    sequelizeCategoryRepository: SequelizeCategoryRepository;
 }
 
 async function initializeDependencies(): Promise<AppDependencies> {
     const redisClient = await createRedisClient();
-    //const firestoreClient = await createFirestoreClient();
     const sequelizeClient = new SequelizeClient();
     await sequelizeClient.connectDatabase();
     const sequelizeUserRepository = new SequelizeUserRepository(sequelizeClient);
+    const sequelizeProviderRepository = new SequelizeProviderRepository(sequelizeClient);
+    const sequelizeCategoryRepository = new SequelizeCategoryRepository(sequelizeClient);
     await sequelizeClient.syncDatabase();
-
-   // return { redisClient, firestoreClient, sequelizeClient };
-    return {sequelizeClient, sequelizeUserRepository, redisClient}
+    return {sequelizeClient, sequelizeUserRepository, sequelizeProviderRepository, sequelizeCategoryRepository, redisClient}
 }
 
 async function createRouters(dependencies: AppDependencies): Promise<Router[]> {
-    //const { redisClient, firestoreClient, sequelizeClient } = dependencies;
-    const { sequelizeUserRepository, redisClient } = dependencies;
-    //const redisGreetingCache = new RedisGreetingCache(redisClient);
-    //const firestoreBooksRepository = new FirestoreBooksRepository(firestoreClient);
-
-    //const greetingUsecase = new GreetingUsecase(redisGreetingCache);
+    const { sequelizeUserRepository, sequelizeProviderRepository, sequelizeCategoryRepository, redisClient } = dependencies;
     const redisUserCache = new RedisUserCache(redisClient);
-    const manageBooksUsecase = new ManageUsersUsecase(sequelizeUserRepository, redisUserCache);
-    // Alternatively: const manageBooksUsecase = new ManageBooksUsecase(firestoreBooksRepository);
+    const manageUsersUsecase = new ManageUsersUsecase(sequelizeUserRepository, redisUserCache);
+    const manageProvidersUsecase = new ManageProvidersUsecase(sequelizeProviderRepository);
+    const manageCategoriesUsecase = new ManageCategoriesUsecase(sequelizeCategoryRepository);
 
     return [
-        //createGreetingRouter(greetingUsecase),
-        createUsersRouter(manageBooksUsecase),
+        createUsersRouter(manageUsersUsecase),
+        createProvidersRouter(manageProvidersUsecase),
+        createCategoriesRouter(manageCategoriesUsecase),
     ];
 }
 
