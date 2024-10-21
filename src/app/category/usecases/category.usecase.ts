@@ -40,11 +40,11 @@ export class ManageCategoriesUsecase {
         }
     }
 
-    async createCategory(data: Omit<Category, 'id'>): Promise<Category> {
+    async createCategory(data: Omit<Category, 'id' | 'vehicles'>): Promise<Category> {
         try {
-            const validatedCategory = CategorySchema.omit({ id: true }).parse(data);
+            const validatedCategory = CategorySchema.omit({ id: true, vehicles: true }).parse(data);
             const id = await this.categoryRepository.createCategory(validatedCategory);
-            return CategoryEntity.create({ ...validatedCategory, id });
+            return CategoryEntity.create({ ...validatedCategory, id, vehicles: [] });
         } catch (error) {
             if (error instanceof ZodError) {
                 throw new ExpressReviewsError(
@@ -65,7 +65,7 @@ export class ManageCategoriesUsecase {
         }
     }
 
-    async updateCategory(id: number, data: Omit<Category, 'id'>): Promise<Category> {
+    async updateCategory(id: number, data: Omit<Category, 'id' | 'vehicles'>): Promise<Category> {
         try {
             const existingCategory = await this.categoryRepository.getCategory(id);
             if (!existingCategory) {
@@ -76,9 +76,9 @@ export class ManageCategoriesUsecase {
                     'ManageCategoriesUsecase.updateCategory'
                 );
             }
-            const validatedCategory = CategorySchema.parse({ ...data, id });
+            const validatedCategory = CategorySchema.omit({ vehicles: true }).parse({ ...data, id });
             await this.categoryRepository.updateCategory(validatedCategory);
-            return CategoryEntity.create(validatedCategory);
+            return CategoryEntity.create({...validatedCategory, vehicles: existingCategory.vehicles});
         } catch (error) {
             if (error instanceof ExpressReviewsError) {
                 throw error;
@@ -111,6 +111,21 @@ export class ManageCategoriesUsecase {
                 ConstantsResponse.INTERNAL_SERVER_ERROR,
                 'DatabaseError',
                 'ManageCategoriesUsecase.deleteCategory',
+                error
+            );
+        }
+    }
+
+    async getCategoryWithVehicles(id: number): Promise<Category | null> {
+        try {
+            const category = await this.categoryRepository.getCategory(id);
+            return category ? CategoryEntity.create(category) : null;
+        } catch (error) {
+            throw new ExpressReviewsError(
+                'Failed to get category with vehicles',
+                ConstantsResponse.INTERNAL_SERVER_ERROR,
+                'DatabaseError',
+                'ManageCategoriesUsecase.getCategoryWithVehicles',
                 error
             );
         }

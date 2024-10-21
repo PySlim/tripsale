@@ -12,6 +12,15 @@ import {createProvidersRouter} from "./app/provider/http/provider.router";
 import {SequelizeCategoryRepository} from "./app/category/repositories/category.repository";
 import {ManageCategoriesUsecase} from "./app/category/usecases/category.usecase";
 import {createCategoriesRouter} from "./app/category/http/category.router";
+import {SequelizePlaceRepository} from "./app/place/repositories/place.repository";
+import {ManagePlacesUsecase} from "./app/place/usecases/place.usecase";
+import {createPlacesRouter} from "./app/place/http/place.router";
+import {SequelizeVehicleRepository} from "./app/vehicle/repositories/vehicle.repository";
+import {ManageVehiclesUsecase} from "./app/vehicle/usecases/vehicle.usecase";
+import {createVehiclesRouter} from "./app/vehicle/http/vehicle.router";
+import {SequelizeCoverageRepository} from "./app/coverage/repositories/coverage.repository";
+import {ManageCoveragesUsecase} from "./app/coverage/usecases/coverage.usecase";
+import {createCoveragesRouter} from "./app/coverage/http/coverage.router";
 
 interface AppDependencies {
     redisClient: ReturnType<typeof createRedisClient>;
@@ -19,6 +28,9 @@ interface AppDependencies {
     sequelizeUserRepository: SequelizeUserRepository;
     sequelizeProviderRepository: SequelizeProviderRepository;
     sequelizeCategoryRepository: SequelizeCategoryRepository;
+    sequelizePlaceRepository: SequelizePlaceRepository;
+    sequelizeVehicleRepository: SequelizeVehicleRepository;
+    sequelizeCoverageRepository: SequelizeCoverageRepository;
 }
 
 async function initializeDependencies(): Promise<AppDependencies> {
@@ -28,21 +40,47 @@ async function initializeDependencies(): Promise<AppDependencies> {
     const sequelizeUserRepository = new SequelizeUserRepository(sequelizeClient);
     const sequelizeProviderRepository = new SequelizeProviderRepository(sequelizeClient);
     const sequelizeCategoryRepository = new SequelizeCategoryRepository(sequelizeClient);
+    const sequelizePlaceRepository = new SequelizePlaceRepository(sequelizeClient);
+    const sequelizeVehicleRepository = new SequelizeVehicleRepository(sequelizeClient);
+    const sequelizeCoverageRepository = new SequelizeCoverageRepository(sequelizeClient);
     await sequelizeClient.syncDatabase();
-    return {sequelizeClient, sequelizeUserRepository, sequelizeProviderRepository, sequelizeCategoryRepository, redisClient}
+    return {
+        sequelizeClient,
+        sequelizeUserRepository,
+        sequelizeProviderRepository,
+        sequelizeCategoryRepository,
+        sequelizePlaceRepository,
+        sequelizeVehicleRepository,
+        sequelizeCoverageRepository,
+        redisClient
+    }
 }
 
 async function createRouters(dependencies: AppDependencies): Promise<Router[]> {
-    const { sequelizeUserRepository, sequelizeProviderRepository, sequelizeCategoryRepository, redisClient } = dependencies;
+    const {
+        sequelizeUserRepository,
+        sequelizeProviderRepository,
+        sequelizeCategoryRepository,
+        sequelizePlaceRepository,
+        sequelizeVehicleRepository,
+        sequelizeCoverageRepository,
+        redisClient
+    } = dependencies;
     const redisUserCache = new RedisUserCache(redisClient);
     const manageUsersUsecase = new ManageUsersUsecase(sequelizeUserRepository, redisUserCache);
     const manageProvidersUsecase = new ManageProvidersUsecase(sequelizeProviderRepository);
     const manageCategoriesUsecase = new ManageCategoriesUsecase(sequelizeCategoryRepository);
+    const managePlacesUsecase = new ManagePlacesUsecase(sequelizePlaceRepository);
+    const manageVehiclesUsecase = new ManageVehiclesUsecase(sequelizeVehicleRepository);
+    const manageCoveragesUsecase = new ManageCoveragesUsecase(sequelizeCoverageRepository);
 
     return [
         createUsersRouter(manageUsersUsecase),
         createProvidersRouter(manageProvidersUsecase),
         createCategoriesRouter(manageCategoriesUsecase),
+        createPlacesRouter(managePlacesUsecase),
+        createVehiclesRouter(manageVehiclesUsecase),
+        createCoveragesRouter(manageCoveragesUsecase),
     ];
 }
 

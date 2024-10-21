@@ -1,3 +1,4 @@
+// src/app/category/http/category.router.ts
 import express, { Router, Request, Response, NextFunction } from 'express';
 import { ManageCategoriesUsecase } from "../usecases/category.usecase";
 import { HandlerError } from "../../../utils/error/handler/handlerError";
@@ -29,6 +30,32 @@ export function createCategoriesRouter(manageCategoriesUsecase: ManageCategories
                 res.status(200).json({
                     ok: true,
                     message: 'Category retrieved successfully',
+                    data: category,
+                    pagination: {},
+                    error: null
+                });
+            } else {
+                res.status(404).json({
+                    ok: false,
+                    message: 'Category not found',
+                    data: null,
+                    pagination: {},
+                    error: { message: 'Category not found' }
+                });
+            }
+        } catch (error) {
+            next(error);
+        }
+    });
+
+    router.get("/categories/:id/vehicles", async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = parseInt(req.params['id'], 10);
+            const category = await manageCategoriesUsecase.getCategoryWithVehicles(id);
+            if (category) {
+                res.status(200).json({
+                    ok: true,
+                    message: 'Category with vehicles retrieved successfully',
                     data: category,
                     pagination: {},
                     error: null

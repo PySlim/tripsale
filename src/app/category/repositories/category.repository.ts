@@ -5,14 +5,17 @@ import SequelizeClient from "../../../frameworks/database/sequelize";
 import ExpressReviewsError from "../../../utils/error/types/expressReviewError";
 import { ConstantsResponse } from "../../../enviroments_variables/constants";
 
-interface CategoryAttributes extends Category {}
+interface CategoryAttributes extends Category {
+    vehicles?: number[];
+}
 
 function isCategoryAttributes(obj: any): obj is CategoryAttributes {
     return typeof obj.id === 'number' &&
         typeof obj.name === 'string' &&
         (obj.description === undefined || typeof obj.description === 'string') &&
         (obj.comfortLevel === undefined || typeof obj.comfortLevel === 'number') &&
-        typeof obj.isActive === 'boolean';
+        typeof obj.isActive === 'boolean' &&
+        (obj.vehicles === undefined || Array.isArray(obj.vehicles));
 }
 
 export class SequelizeCategoryRepository implements CategoryRepository {
@@ -51,6 +54,13 @@ export class SequelizeCategoryRepository implements CategoryRepository {
             tableName: tableName,
             timestamps: false,
         });
+
+        // Definir la relación con Vehicle
+        this.categoryModel.hasMany(this.sequelizeClient.sequelize.models.Vehicle, {
+            foreignKey: 'categoryId',
+            as: 'vehicles'
+        });
+
         this.syncModel();
     }
 
@@ -65,10 +75,17 @@ export class SequelizeCategoryRepository implements CategoryRepository {
 
     async getCategories(): Promise<Category[]> {
         try {
-            const categories = await this.categoryModel.findAll({ raw: true });
+            const categories = await this.categoryModel.findAll({
+                include: [{ model: this.sequelizeClient.sequelize.models.Vehicle, as: 'vehicles' }],
+                raw: true,
+                nest: true
+            });
             return categories.map(category => {
                 if (isCategoryAttributes(category)) {
-                    return category;
+                    return {
+                        ...category,
+                        vehicles: category.vehicles?.map(v => v.id) || []
+                    };
                 }
                 throw new ExpressReviewsError('Invalid category data returned from database', ConstantsResponse.INTERNAL_SERVER_ERROR, 'DatabaseError', 'SequelizeCategoryRepository.getCategories');
             });
@@ -79,9 +96,16 @@ export class SequelizeCategoryRepository implements CategoryRepository {
 
     async getCategory(id: number): Promise<Category | null> {
         try {
-            const category = await this.categoryModel.findByPk(id, { raw: true });
+            const category = await this.categoryModel.findByPk(id, {
+                include: [{ model: this.sequelizeClient.sequelize.models.Vehicle, as: 'vehicles' }],
+                raw: true,
+                nest: true
+            });
             if (category && isCategoryAttributes(category)) {
-                return category;
+                return {
+                    ...category,
+                    vehicles: category.vehicles?.map(v => v.id) || []
+                };
             }
             return null;
         } catch (error) {
