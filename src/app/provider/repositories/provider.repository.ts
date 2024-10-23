@@ -3,7 +3,7 @@ import { Provider } from "../entities/provider";
 import { ProviderRepository } from "./repository.interface.provider";
 import SequelizeClient from "../../../frameworks/database/sequelize";
 import ExpressReviewsError from "../../../utils/error/types/expressReviewError";
-import { ConstantsResponse } from "../../../enviroments_variables/constants";
+import { ConstantsResponse } from "../../../constants/constants";
 
 interface ProviderAttributes extends Provider {}
 
@@ -15,7 +15,7 @@ function isProviderAttributes(obj: any): obj is ProviderAttributes {
 }
 
 export class SequelizeProviderRepository implements ProviderRepository {
-    private providerModel: ReturnType<typeof SequelizeClient.prototype.sequelize.define>;
+    public providerModel: ReturnType<typeof SequelizeClient.prototype.sequelize.define>;
 
     constructor(private sequelizeClient: SequelizeClient, test = false) {
         let tableName = "Providers";
@@ -52,7 +52,7 @@ export class SequelizeProviderRepository implements ProviderRepository {
 
     private async syncModel() {
         try {
-            await this.providerModel.sync({ alter: true });
+            await this.providerModel.sync({ alter: false });
             console.log(`Provider model synchronized successfully.`);
         } catch (error) {
             console.error(`Error synchronizing Provider model:`, error);

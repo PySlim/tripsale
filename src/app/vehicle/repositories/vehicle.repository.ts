@@ -3,7 +3,7 @@ import { Vehicle } from "../entities/vehicle";
 import { VehicleRepository } from "./repository.interface.vehicle";
 import SequelizeClient from "../../../frameworks/database/sequelize";
 import ExpressReviewsError from "../../../utils/error/types/expressReviewError";
-import { ConstantsResponse } from "../../../enviroments_variables/constants";
+import { ConstantsResponse } from "../../../constants/constants";
 
 interface VehicleAttributes extends Vehicle {}
 
@@ -19,7 +19,7 @@ function isVehicleAttributes(obj: any): obj is VehicleAttributes {
 }
 
 export class SequelizeVehicleRepository implements VehicleRepository {
-    private vehicleModel: ReturnType<typeof SequelizeClient.prototype.sequelize.define>;
+    public vehicleModel: ReturnType<typeof SequelizeClient.prototype.sequelize.define>;
 
     constructor(private sequelizeClient: SequelizeClient, test = false) {
         let tableName = "Vehicles";
@@ -80,7 +80,7 @@ export class SequelizeVehicleRepository implements VehicleRepository {
 
     private async syncModel() {
         try {
-            await this.vehicleModel.sync({ alter: true });
+            await this.vehicleModel.sync({ alter: false });
             console.log(`Vehicle model synchronized successfully.`);
         } catch (error) {
             console.error(`Error synchronizing Vehicle model:`, error);

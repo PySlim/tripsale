@@ -1,4 +1,3 @@
-// src/app/vehicle/http/vehicle.router.ts
 import express, { Router, Request, Response, NextFunction } from 'express';
 import { ManageVehiclesUsecase } from "../usecases/vehicle.usecase";
 import { HandlerError } from "../../../utils/error/handler/handlerError";

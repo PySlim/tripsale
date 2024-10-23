@@ -1,15 +1,16 @@
 import jwt from 'jsonwebtoken';
+import { User } from "../../app/user/entities/user";
 
-import {getEnvVar} from "../../utils/environment/captureVariables/get.var.env";
-import {userInterfaceData} from "../../app/user/model/user.object.model";
-
-
-export function generateToken(user: userInterfaceData) {
-    const payload:any = {
-        id: user.id,
-        email: user.email,
-    };
-    const secret = getEnvVar('SECRET_PASS');
-    const options = { expiresIn: '1h' };
-    return jwt.sign(payload, secret, options);
+export function generateToken(user: User): string {
+    const secretKey = process.env['JWT_SECRET'] || 'your-secret-key';  // Cambiar a ['JWT_SECRET']
+    return jwt.sign(
+        {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            secondName: user.secondName
+        },
+        secretKey,
+        { expiresIn: '24h' }
+    );
 }

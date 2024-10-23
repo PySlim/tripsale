@@ -1,7 +1,7 @@
 // src/resources/middlewares/validate.identity.middleware.ts
 import ExpressReviewsError from "../../utils/error/types/expressReviewError";
 import jwt from 'jsonwebtoken';
-import { ConstantsResponse } from "../../enviroments_variables/constants";
+import { ConstantsResponse } from "../../constants/constants";
 import { getEnvVar } from "../../utils/environment/captureVariables/get.var.env";
 import { NextFunction, Request, Response } from "express";
 

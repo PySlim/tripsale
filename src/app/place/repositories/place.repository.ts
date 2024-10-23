@@ -1,9 +1,9 @@
 import { Model, DataTypes } from 'sequelize';
-import { Place, PlaceSchema } from "../entities/place";
+import { Place } from "../entities/place";
 import { PlaceRepository } from "./repository.interface.place";
 import SequelizeClient from "../../../frameworks/database/sequelize";
 import ExpressReviewsError from "../../../utils/error/types/expressReviewError";
-import { ConstantsResponse } from "../../../enviroments_variables/constants";
+import { ConstantsResponse } from "../../../constants/constants";
 
 interface PlaceAttributes extends Place {}
 
@@ -19,7 +19,7 @@ function isPlaceAttributes(obj: any): obj is PlaceAttributes {
 }
 
 export class SequelizePlaceRepository implements PlaceRepository {
-    private placeModel: ReturnType<typeof SequelizeClient.prototype.sequelize.define>;
+    public placeModel: ReturnType<typeof SequelizeClient.prototype.sequelize.define>;
 
     constructor(private sequelizeClient: SequelizeClient, test = false) {
         let tableName = "Places";
@@ -72,7 +72,7 @@ export class SequelizePlaceRepository implements PlaceRepository {
 
     private async syncModel() {
         try {
-            await this.placeModel.sync({ alter: true });
+            await this.placeModel.sync({ alter: false });
             console.log(`Place model synchronized successfully.`);
         } catch (error) {
             console.error(`Error synchronizing Place model:`, error);
@@ -188,3 +188,4 @@ export class SequelizePlaceRepository implements PlaceRepository {
         }
     }
 }
+

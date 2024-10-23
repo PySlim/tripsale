@@ -3,7 +3,7 @@ import { ProviderRepository } from "../repositories/repository.interface.provide
 
 import ExpressReviewsError from '../../../utils/error/types/expressReviewError';
 import { ZodError } from 'zod';
-import { ConstantsResponse } from '../../../enviroments_variables/constants';
+import { ConstantsResponse } from '../../../constants/constants';
 
 export class ManageProvidersUsecase {
     constructor(

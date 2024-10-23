@@ -46,4 +46,14 @@ export interface UserRepository {
      * @returns Una promesa que se resuelve cuando la tabla ha sido eliminada.
      */
     dropUsersTable(): Promise<void>;
+
+    getUserByEmail(email: string): Promise<User | null>;
+
+    /**
+     * Autentica a un usuario.
+     * @param email El email del usuario.
+     * @param password La contraseña del usuario.
+     * @returns Una promesa que resuelve al usuario autenticado o null si las credenciales son incorrectas.
+     */
+    authenticateUser(email: string, password: string): Promise<User | null>;
 }

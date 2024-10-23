@@ -1,0 +1,467 @@
+### Obtener todas las categorías
+GET http://localhost:5500/categories
+Content-Type: application/json
+
+###
+
+### Obtener una categoría por ID
+GET http://localhost:5500/categories/1
+Content-Type: application/json
+
+###
+
+### Obtener una categoría y sus vehículos asociados
+GET http://localhost:5500/categories/1/vehicles
+Content-Type: application/json
+
+###
+
+### Crear una nueva categoría
+POST http://localhost:5500/categories
+Content-Type: application/json
+
+{
+  "name": "New Category",
+  "description": "Category description"
+}
+
+###
+
+### Actualizar una categoría por ID
+PUT http://localhost:5500/categories/1
+Content-Type: application/json
+
+{
+  "name": "Updated Category",
+  "description": "Updated description"
+}
+
+###
+
+### Eliminar una categoría por ID
+DELETE http://localhost:5500/categories/1
+Content-Type: application/json
+
+
+### Obtener todas las coberturas
+GET http://localhost:5500/coverages
+Content-Type: application/json
+
+###
+
+### Obtener una cobertura por ID
+GET http://localhost:5500/coverages/1
+Content-Type: application/json
+
+###
+
+### Crear una nueva cobertura
+POST http://localhost:5500/coverages
+Content-Type: application/json
+
+{
+  "startTime": "2024-10-01T08:00:00.000Z",
+  "duration": 120,
+  "isActive": true,
+  "originPlaceId": 1,
+  "destinationPlaceId": 2,
+  "providerId": 1,
+  "vehicleId": 1
+}
+
+###
+
+### Actualizar una cobertura por ID
+PUT http://localhost:5500/coverages/1
+Content-Type: application/json
+
+{
+  "startTime": "2024-10-01T08:00:00.000Z",
+  "duration": 180,
+  "isActive": false,
+  "originPlaceId": 1,
+  "destinationPlaceId": 2,
+  "providerId": 1,
+  "vehicleId": 1
+}
+
+###
+
+### Eliminar una cobertura por ID
+DELETE http://localhost:5500/coverages/1
+Content-Type: application/json
+
+###
+
+### Obtener coberturas por proveedor
+GET http://localhost:5500/coverages/provider/1
+Content-Type: application/json
+
+###
+
+### Obtener coberturas por vehículo
+GET http://localhost:5500/coverages/vehicle/1
+Content-Type: application/json
+
+###
+
+### Obtener coberturas por origen
+GET http://localhost:5500/coverages/origin/1
+Content-Type: application/json
+
+###
+
+### Obtener coberturas por destino
+GET http://localhost:5500/coverages/destination/1
+Content-Type: application/json
+
+###
+
+### Obtener coberturas activas o inactivas
+GET http://localhost:5500/coverages/active/true
+Content-Type: application/json
+
+
+### Obtener todos los lugares
+GET http://localhost:5500/places
+Content-Type: application/json
+
+###
+
+### Obtener un lugar por ID
+GET http://localhost:5500/places/1
+Content-Type: application/json
+
+###
+
+### Crear un nuevo lugar
+POST http://localhost:5500/places
+Content-Type: application/json
+
+{
+  "name": "New Place",
+  "type": "CITY",
+  "isActive": true
+}
+
+###
+
+### Actualizar un lugar por ID
+PUT http://localhost:5500/places/1
+Content-Type: application/json
+
+{
+  "name": "Updated Place",
+  "type": "CITY",
+  "isActive": true
+}
+
+###
+
+### Eliminar un lugar por ID
+DELETE http://localhost:5500/places/1
+Content-Type: application/json
+
+###
+
+### Obtener lugares por tipo
+GET http://localhost:5500/places/type/CITY
+Content-Type: application/json
+
+###
+
+### Obtener lugares por estado activo o inactivo
+GET http://localhost:5500/places/active/true
+Content-Type: application/json
+
+
+### Obtener todos los precios
+GET http://localhost:5500/prices
+Content-Type: application/json
+
+###
+
+### Obtener un precio por ID
+GET http://localhost:5500/prices/1
+Content-Type: application/json
+
+###
+
+### Crear un nuevo precio
+POST http://localhost:5500/prices
+Content-Type: application/json
+
+{
+  "amount": 100.50,
+  "currency": "USD",
+  "isActive": true,
+  "validFrom": "2024-01-01",
+  "validUntil": "2024-12-31",
+  "coverageId": 1
+}
+
+###
+
+### Actualizar un precio por ID
+PUT http://localhost:5500/prices/1
+Content-Type: application/json
+
+{
+  "amount": 150.00,
+  "currency": "USD",
+  "isActive": true,
+  "validFrom": "2024-01-01",
+  "validUntil": "2024-12-31",
+  "coverageId": 1
+}
+
+###
+
+### Eliminar un precio por ID
+DELETE http://localhost:5500/prices/1
+Content-Type: application/json
+
+###
+
+### Obtener precios por cobertura
+GET http://localhost:5500/prices/coverage/1
+Content-Type: application/json
+
+###
+
+### Obtener precios por fecha válida
+GET http://localhost:5500/prices/valid-date/2024-01-01
+Content-Type: application/json
+
+###
+
+### Obtener precios válidos por cobertura y fecha
+GET http://localhost:5500/prices/coverage/1/date/2024-01-01
+Content-Type: application/json
+
+###
+
+### Obtener precios activos o inactivos
+GET http://localhost:5500/prices/active/true
+Content-Type: application/json
+
+
+### Obtener todos los proveedores
+GET http://localhost:5500/providers
+Content-Type: application/json
+
+###
+
+### Obtener un proveedor por ID
+GET http://localhost:5500/providers/1
+Content-Type: application/json
+
+###
+
+### Crear un nuevo proveedor
+POST http://localhost:5500/providers
+Content-Type: application/json
+
+{
+  "name": "Provider Name",
+  "email": "provider@example.com",
+  "phone": "123456789",
+  "isActive": true
+}
+
+###
+
+### Actualizar un proveedor por ID
+PUT http://localhost:5500/providers/1
+Content-Type: application/json
+
+{
+  "name": "Updated Provider Name",
+  "email": "updatedprovider@example.com",
+  "phone": "987654321",
+  "isActive": true
+}
+
+###
+
+### Eliminar un proveedor por ID
+DELETE http://localhost:5500/providers/1
+Content-Type: application/json
+
+
+### Obtener todas las cotizaciones
+GET http://localhost:5500/quotations
+Content-Type: application/json
+
+###
+
+### Obtener una cotización por ID
+GET http://localhost:5500/quotations/1
+Content-Type: application/json
+
+###
+
+### Crear una nueva cotización
+POST http://localhost:5500/quotations
+Content-Type: application/json
+
+{
+  "status": "CREATED",
+  "travelDate": "2024-11-01",
+  "passengerCount": 3,
+  "isActive": true,
+  "userId": 1,
+  "originPlaceId": 2,
+  "destinationPlaceId": 3,
+  "categoryId": 1,
+  "coverageId": 1,
+  "priceId": 1
+}
+
+###
+
+### Actualizar el estado de una cotización
+PATCH http://localhost:5500/quotations/1/status
+Content-Type: application/json
+
+{
+  "status": "RESERVED",
+  "coverageId": 2,
+  "priceId": 1
+}
+
+###
+
+### Obtener cotizaciones por usuario
+GET http://localhost:5500/quotations/user/1
+Content-Type: application/json
+
+###
+
+### Obtener cotizaciones por proveedor
+GET http://localhost:5500/quotations/provider/1
+Content-Type: application/json
+
+###
+
+### Obtener cotizaciones por rango de fechas
+GET http://localhost:5500/quotations/date-range?startDate=2024-11-01&endDate=2024-11-30
+Content-Type: application/json
+
+###
+
+### Eliminar una cotización por ID
+DELETE http://localhost:5500/quotations/1
+Content-Type: application/json
+
+
+### Obtener todos los usuarios
+GET http://localhost:5500/users
+Content-Type: application/json
+
+###
+
+### Obtener un usuario por ID
+GET http://localhost:5500/users/1
+Content-Type: application/json
+
+###
+
+### Crear un nuevo usuario
+POST http://localhost:5500/users
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "secondName": "Doe",
+  "document": 123456789,
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+
+###
+
+### Actualizar un usuario por ID
+PUT http://localhost:5500/users/1
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "secondName": "Doe",
+  "document": 123456789,
+  "email": "john.doe@newemail.com",
+  "password": "newpassword123"
+}
+
+###
+
+### Eliminar un usuario por ID
+DELETE http://localhost:5500/users/1
+Content-Type: application/json
+
+
+### Obtener todos los vehículos
+GET http://localhost:5500/vehicles
+Content-Type: application/json
+
+###
+
+### Obtener un vehículo por ID
+GET http://localhost:5500/vehicles/1
+Content-Type: application/json
+
+###
+
+### Crear un nuevo vehículo
+POST http://localhost:5500/vehicles
+Content-Type: application/json
+
+{
+  "name": "Vehicle 1",
+  "code": "V001",
+  "capacity": 5,
+  "isActive": true,
+  "description": "A nice vehicle",
+  "providerId": 1,
+  "categoryId": 1
+}
+
+###
+
+### Actualizar un vehículo por ID
+PUT http://localhost:5500/vehicles/1
+Content-Type: application/json
+
+{
+  "name": "Vehicle Updated",
+  "code": "V001U",
+  "capacity": 6,
+  "isActive": true,
+  "description": "An updated nice vehicle",
+  "providerId": 1,
+  "categoryId": 1
+}
+
+###
+
+### Eliminar un vehículo por ID
+DELETE http://localhost:5500/vehicles/1
+Content-Type: application/json
+
+###
+
+### Obtener vehículos por proveedor
+GET http://localhost:5500/vehicles/provider/1
+Content-Type: application/json
+
+###
+
+### Obtener vehículos por categoría
+GET http://localhost:5500/vehicles/category/1
+Content-Type: application/json
+
+###
+
+### Obtener vehículos activos/inactivos
+GET http://localhost:5500/vehicles/active/true
+Content-Type: application/json

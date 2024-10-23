@@ -1,5 +1,12 @@
 import { z } from 'zod';
+import {ProviderSchema} from "../../provider/entities/provider";
+import {CategorySchema} from "../../category/entities/category";
+import {CoverageSchema} from "../../coverage/entities/coverage";
 
+// Importamos los esquemas de Provider, Category y Coverage si los tienes definidos
+
+
+// Definimos el esquema para Vehicle
 export const VehicleSchema = z.object({
     id: z.number().optional(),
     name: z.string().min(1, { message: 'Vehicle name is required' }),
@@ -10,7 +17,10 @@ export const VehicleSchema = z.object({
     // Relaciones
     providerId: z.number(), // ID del proveedor asociado
     categoryId: z.number(), // ID de la categoría asociada
-    coverages: z.array(z.number()).optional(), // IDs de las coberturas relacionadas
+    // Asociaciones opcionales con entidades
+    provider: ProviderSchema.optional(),
+    category: CategorySchema.optional(),
+    coverages: z.array(CoverageSchema).optional(), // Arreglo de coberturas asociadas
 });
 
 export type Vehicle = z.infer<typeof VehicleSchema>;
@@ -24,7 +34,10 @@ export class VehicleEntity implements Vehicle {
     description?: string;
     providerId: number;
     categoryId: number;
-    coverages?: number[];
+    // Asociaciones opcionales con entidades
+    provider?: z.infer<typeof ProviderSchema>;
+    category?: z.infer<typeof CategorySchema>;
+    coverages?: z.infer<typeof CoverageSchema>[];
 
     constructor(vehicle: Vehicle) {
         this.id = vehicle.id;
@@ -35,6 +48,9 @@ export class VehicleEntity implements Vehicle {
         this.description = vehicle.description;
         this.providerId = vehicle.providerId;
         this.categoryId = vehicle.categoryId;
+        // Asignamos las asociaciones opcionales si están presentes
+        this.provider = vehicle.provider;
+        this.category = vehicle.category;
         this.coverages = vehicle.coverages;
     }
 

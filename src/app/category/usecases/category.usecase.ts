@@ -3,7 +3,7 @@ import { CategoryRepository } from "../repositories/repository.interface.categor
 
 import ExpressReviewsError from '../../../utils/error/types/expressReviewError';
 import { ZodError } from 'zod';
-import { ConstantsResponse } from '../../../enviroments_variables/constants';
+import { ConstantsResponse } from '../../../constants/constants';
 
 export class ManageCategoriesUsecase {
     constructor(

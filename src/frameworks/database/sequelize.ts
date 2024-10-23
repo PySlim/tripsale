@@ -32,12 +32,23 @@ class SequelizeClient {
         }
     }
 
-    public async syncDatabase(): Promise<void> {
+    // En frameworks/database/sequelize.ts
+
+    async syncDatabase(): Promise<void> {
         try {
-            await this.sequelize.sync({ alter: true, force: false });
-            console.log('Database synced successfully.');
+            await this.sequelize.authenticate();
+            console.log('Connection has been established successfully.');
+
+            // Forzar sincronización secuencial
+            await this.sequelize.sync({
+                force: false, // Cambiar a true solo si quieres recrear las tablas
+                alter: true,
+                logging: console.log
+            });
+
+            console.log('All models were synchronized successfully.');
         } catch (error) {
-            console.error("Couldn't sync database", error);
+            console.error('Unable to sync database:', error);
             throw error;
         }
     }

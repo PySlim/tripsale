@@ -1,4 +1,3 @@
-// src/app/provider/http/provider.router.ts
 import express, { Router, Request, Response, NextFunction } from 'express';
 import { ManageProvidersUsecase } from "../usecases/provider.usecase";
 import { HandlerError } from "../../../utils/error/handler/handlerError";

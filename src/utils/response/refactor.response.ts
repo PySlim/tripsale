@@ -1,7 +1,7 @@
 import {NextFunction} from "express";
 import {Schema} from "zod";
 import ExpressReviewsError from "../error/types/expressReviewError";
-import {ConstantsResponse} from "../../enviroments_variables/constants";
+import {ConstantsResponse} from "../../constants/constants";
 
 
 export function RefactorResponse(schema: Schema, dataObject: Object | Object[], message: string, next: NextFunction, pagination?: Object):Object | any{

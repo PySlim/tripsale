@@ -3,7 +3,7 @@ import cors, { CorsOptions } from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from "../../resources/swagger/swagger";
 import {HandlerError} from "../../utils/error/handler/handlerError";
-import {ConstantsModule} from "../../enviroments_variables/constants";
+import {ConstantsModule} from "../../constants/constants";
 
 
 

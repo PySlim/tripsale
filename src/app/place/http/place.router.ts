@@ -1,4 +1,3 @@
-// src/app/place/http/place.router.ts
 import express, { Router, Request, Response, NextFunction } from 'express';
 import { ManagePlacesUsecase } from "../usecases/place.usecase";
 import { HandlerError } from "../../../utils/error/handler/handlerError";

@@ -1,4 +1,3 @@
-// src/app/category/http/category.router.ts
 import express, { Router, Request, Response, NextFunction } from 'express';
 import { ManageCategoriesUsecase } from "../usecases/category.usecase";
 import { HandlerError } from "../../../utils/error/handler/handlerError";

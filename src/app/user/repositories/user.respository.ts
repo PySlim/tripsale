@@ -3,7 +3,8 @@ import { User } from "../entities/user";
 import { UserRepository } from "./repository.interface.user";
 import SequelizeClient from "../../../frameworks/database/sequelize";
 import ExpressReviewsError from "../../../utils/error/types/expressReviewError";
-import { ConstantsResponse } from "../../../enviroments_variables/constants";
+import { ConstantsResponse } from "../../../constants/constants";
+import * as argon2 from "argon2";
 
 interface UserAttributes extends User {}
 
@@ -17,7 +18,7 @@ function isUserAttributes(obj: any): obj is UserAttributes {
 }
 
 export class SequelizeUserRepository implements UserRepository {
-    private userModel: ReturnType<typeof SequelizeClient.prototype.sequelize.define>;
+    public userModel: ReturnType<typeof SequelizeClient.prototype.sequelize.define>;
 
     constructor(private sequelizeClient: SequelizeClient, test = false) {
         let tableName = "Users";
@@ -61,7 +62,7 @@ export class SequelizeUserRepository implements UserRepository {
 
     private async syncModel() {
         try {
-            await this.userModel.sync({ alter: true });
+            await this.userModel.sync({ alter: false });
             console.log(`User model synchronized successfully.`);
         } catch (error) {
             console.error(`Error synchronizing User model:`, error);
@@ -188,4 +189,35 @@ export class SequelizeUserRepository implements UserRepository {
             throw new ExpressReviewsError('Failed to get user by email', ConstantsResponse.INTERNAL_SERVER_ERROR, 'DatabaseError', 'SequelizeUserRepository.getUserByEmail', error);
         }
     }
+
+    async authenticateUser(email: string, password: string): Promise<User | null> {
+        try {
+            // Buscar el usuario por email
+            const user = await this.getUserByEmail(email);
+            if (!user) {
+                // Si el usuario no existe, devolver null
+                return null;
+            }
+
+            // Verificar la contraseña usando argon2
+            const isPasswordValid = await argon2.verify(user.password, password);
+            if (!isPasswordValid) {
+                // Si la contraseña no es válida, devolver null
+                return null;
+            }
+
+            // Devolver el usuario si las credenciales son válidas
+            return user;
+        } catch (error) {
+            // Manejar cualquier error que ocurra durante la autenticación
+            throw new ExpressReviewsError(
+                'Authentication failed',
+                ConstantsResponse.INTERNAL_SERVER_ERROR,
+                'AuthenticationError',
+                'SequelizeUserRepository.authenticateUser',
+                error
+            );
+        }
+    }
+
 }

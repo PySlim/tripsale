@@ -1,11 +1,12 @@
-// src/app/user/usecases/user.usecase.ts
-import { User, UserEntity, UserSchema } from '../entities/user';
-import { UserRepository } from "../repositories/repository.interface.user";
+import {User, UserEntity, UserSchema} from '../entities/user';
+import {UserRepository} from "../repositories/repository.interface.user";
 
 import ExpressReviewsError from '../../../utils/error/types/expressReviewError';
-import { ZodError } from 'zod';
-import { ConstantsResponse } from '../../../enviroments_variables/constants';
+import {ZodError} from 'zod';
+import {ConstantsResponse} from '../../../constants/constants';
 import {UserCache} from "../repositories/cache.interface.user";
+import * as argon2 from "argon2";
+import {generateToken} from "../../../resources/token/token";
 
 export class ManageUsersUsecase {
     constructor(
@@ -55,14 +56,49 @@ export class ManageUsersUsecase {
         }
     }
 
-    async createUser(data: Omit<User, 'id'>): Promise<User> {
+    async createUser(data: Omit<User, 'id'> & { password_confirmation: string }): Promise<User & { token?: string }> {
         try {
+            // Validar que las contraseñas coincidan
+            if (data.password !== data.password_confirmation) {
+                throw new ExpressReviewsError(
+                    'Password and confirmation do not match. Please try again.',
+                    ConstantsResponse.FORBIDDEN,
+                    'ValidationError',
+                    'ManageUsersUsecase.createUser'
+                );
+            }
+
             const validatedUser = UserSchema.omit({ id: true }).parse(data);
+
+            // Verificar si el email ya existe
+            const userSearch = await this.userRepository.getUserByEmail(validatedUser.email);
+            if (userSearch) {
+                throw new ExpressReviewsError(
+                    'The email is already in use.',
+                    ConstantsResponse.FORBIDDEN,
+                    'ValidationError',
+                    'ManageUsersUsecase.createUser'
+                );
+            }
+
+            // Hashear la contraseña
+            validatedUser.password = await argon2.hash(validatedUser.password);
+
+            // Crear el usuario
             const id = await this.userRepository.createUser(validatedUser);
             const newUser = UserEntity.create({ ...validatedUser, id });
-            // Add to cache
+
+            // Generar token
+            const token = generateToken(newUser);
+
+            // Agregar a cache
             await this.userCache.setUser(newUser);
-            return newUser;
+
+            // Retornar usuario con token
+            return {
+                ...newUser,
+                token
+            };
         } catch (error) {
             if (error instanceof ZodError) {
                 throw new ExpressReviewsError(
@@ -72,6 +108,9 @@ export class ManageUsersUsecase {
                     'ManageUsersUsecase.createUser',
                     error
                 );
+            }
+            if (error instanceof ExpressReviewsError) {
+                throw error;
             }
             throw new ExpressReviewsError(
                 'Failed to create user',
@@ -138,4 +177,38 @@ export class ManageUsersUsecase {
             );
         }
     }
+
+    async loginUser(email: string, password: string): Promise<User & { token: string }> {
+        try {
+            // Autenticar al usuario usando el repositorio
+            const user = await this.userRepository.authenticateUser(email, password);
+
+            if (!user) {
+                throw new ExpressReviewsError(
+                    'Invalid credentials',
+                    ConstantsResponse.FORBIDDEN,
+                    'ValidationError',
+                    'ManageUsersUsecase.loginUser'
+                );
+            }
+
+            // Generar token
+            const token = generateToken(user);
+
+            // Retornar usuario con token
+            return {
+                ...UserEntity.create(user),
+                token
+            };
+        } catch (error) {
+            throw new ExpressReviewsError(
+                'Failed to login user',
+                ConstantsResponse.INTERNAL_SERVER_ERROR,
+                'AuthenticationError',
+                'ManageUsersUsecase.loginUser',
+                error
+            );
+        }
+    }
+
 }

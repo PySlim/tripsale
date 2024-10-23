@@ -1,5 +1,5 @@
 import swaggerJSDoc from 'swagger-jsdoc';
-import { ConstantsModule } from '../../enviroments_variables/constants';
+import { ConstantsModule } from '../../constants/constants';
 
 import path from 'path';
 
