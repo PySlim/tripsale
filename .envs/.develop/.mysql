@@ -1,0 +1,8 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=wisdomia
+POSTGRES_USER=qgvikUNdaIiihBtnskESWJjWGHDdGkRY
+POSTGRES_PASSWORD=YcozQm740zOcKgP6vkcaqK8oWjsdkwtzF5Wb5BQTNnmBzUtei3wTDyKsZ5l2EI40

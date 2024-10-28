@@ -1,0 +1,15 @@
+# Node
+# ------------------------------------------------------------------------------
+DB_HOST=mysql
+DB_USER=root
+DB_PASS=root
+DB_NAME=trip
+DB_PORT=3306
+NODE_ENV=development
+CHOKIDAR_USEPOLLING=true
+SECRET_PASS=akam1022AK
+
+DB_DIALECT=mysql
+ECOMMERCE_MYSQL_DATABASE=trip
+REDIS_HOST=redis
+REDIS_PORT=6379
